@@ -25,27 +25,35 @@ connection.query(createDatabase, function(error) {
         console.log(error);
     } else {
         console.log("database created");
-        connection.changeUser({database: dbName}, function(error) {
-            if (error) {
-                console.log("unable to change database");
-            } else {
-                connection.query(createProfilesQuery, function(error) {
-                    if (error) {
-                        console.log(error);
-                    } else {
-                        console.log("profiles table created");
-                    }
-                })
+        // connection.changeUser({database: dbName}, function(error) {
+        //     if (error) {
+        //         console.log("unable to change database");
+        //     } 
+        // })
+    }
+})
 
-                connection.query(createUsersQuery, function(error) {
-                    if (error) {
-                        // console.log(error);
-                    } else {
-                        console.log("users table created");
-                    }
-                })
-            }
-        })
+connection.query(`USE ${dbName}`, function(error){
+    if (error) {
+        console.log(error);
+    } else {
+        console.log(`Using ${dbName}`)
+    }
+})
+
+connection.query(createProfilesQuery, function(error) {
+    if (error) {
+        console.log(error);
+    } else {
+        console.log("profiles table created");
+    }
+})
+
+connection.query(createUsersQuery, function(error) {
+    if (error) {
+        // console.log(error);
+    } else {
+        console.log("users table created");
     }
 })
 
