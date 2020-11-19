@@ -14,9 +14,9 @@ var dbName = "swiftapi"
 
 const createDatabase = `CREATE DATABASE IF NOT EXISTS ${dbName}`;
 
-const createProfilesQuery = `CREATE TABLE IF NOT EXISTS ${dbName}.Profiles(pid INT AUTO_INCREMENT PRIMARY KEY, name VARCHAR(20),\
+const createProfilesQuery = `CREATE TABLE IF NOT EXISTS PROFILES (pid INT AUTO_INCREMENT PRIMARY KEY, name VARCHAR(20),\
                             age INT NOT NULL, gender VARCHAR(20))`
-const createUsersQuery = `CREATE TABLE IF NOT EXISTS ${dbName}.Users(uid INT AUTO_INCREMENT PRIMARY KEY, username VARCHAR(20),\
+const createUsersQuery = `CREATE TABLE IF NOT EXISTS USERS (uid INT AUTO_INCREMENT PRIMARY KEY, username VARCHAR(20),\
                         password VARCHAR(255) NOT NULL, email VARCHAR(100), phone VARCHAR(50), pid INT, \
                         FOREIGN KEY (pid) REFERENCES Profiles(pid))`
 
