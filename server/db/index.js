@@ -3,10 +3,11 @@ const dotenv = require('dotenv');
 dotenv.config();
 
 const connection = mysql.createConnection({
-    host: 'localhost',
-    user: 'root',
-    password: process.env.db_password,
-    database: 'sys'
+    host: process.env.RDS_HOSTNAME || 'localhost',
+    user: process.env.RDS_USERNAME || 'root',
+    password: process.env.RDS_PASSWORD || process.env.db_password,
+    database: "sys",
+    port: process.env.RDS_PORT,
   })
 
 const createProfilesQuery = "CREATE TABLE IF NOT EXISTS Profiles(pid INT AUTO_INCREMENT PRIMARY KEY, name VARCHAR(20),\
