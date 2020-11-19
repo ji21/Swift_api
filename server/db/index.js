@@ -2,13 +2,17 @@ const mysql = require('mysql');
 const dotenv = require('dotenv');
 dotenv.config();
 
+
 const connection = mysql.createConnection({
     host: process.env.RDS_HOSTNAME || 'localhost',
     user: process.env.RDS_USERNAME || 'root',
     password: process.env.RDS_PASSWORD || process.env.db_password,
-    // database: "sys",
     port: process.env.RDS_PORT,
   })
+
+var dbName = "swiftapi"
+
+const createDatabase = `CREATE DATABASE IF NOT EXISTS ${dbName}`;
 
 const createProfilesQuery = "CREATE TABLE IF NOT EXISTS Profiles(pid INT AUTO_INCREMENT PRIMARY KEY, name VARCHAR(20),\
                             age INT NOT NULL, gender VARCHAR(20))"
@@ -16,31 +20,35 @@ const createUsersQuery = "CREATE TABLE IF NOT EXISTS Users(uid INT AUTO_INCREMEN
                         password VARCHAR(255) NOT NULL, email VARCHAR(100), phone VARCHAR(50), pid INT, \
                         FOREIGN KEY (pid) REFERENCES Profiles(pid))"
 
-
-connection.connect(function(error) {
+connection.query(createDatabase, function(error) {
     if (error) {
         console.log(error);
     } else {
-        console.log("connected to mysql...");
+        console.log("database created");
+        connection.changeUser({database: dbName}, function(error) {
+            if (error) {
+                console.log("unable to change database");
+            } else {
+                connection.query(createProfilesQuery, function(error) {
+                    if (error) {
+                        console.log(error);
+                    } else {
+                        console.log("profiles table created");
+                    }
+                })
+
+                connection.query(createUsersQuery, function(error) {
+                    if (error) {
+                        // console.log(error);
+                    } else {
+                        console.log("users table created");
+                    }
+                })
+            }
+        })
     }
 })
 
-
-connection.query(createProfilesQuery, function(error) {
-    if (error) {
-        console.log(error);
-    } else {
-        console.log("profiles table created");
-    }
-})
-
-connection.query(createUsersQuery, function(error) {
-    if (error) {
-        // console.log(error);
-    } else {
-        console.log("users table created");
-    }
-})
 
 let db = {users: {all: null, getUserById: null}, profiles: {all: null}};
 
