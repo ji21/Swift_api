@@ -18,7 +18,7 @@ const createProfilesQuery = `CREATE TABLE IF NOT EXISTS PROFILES (pid INT AUTO_I
                             age INT NOT NULL, gender VARCHAR(20))`
 const createUsersQuery = `CREATE TABLE IF NOT EXISTS USERS (uid INT AUTO_INCREMENT PRIMARY KEY, username VARCHAR(20),\
                         password VARCHAR(255) NOT NULL, email VARCHAR(100), phone VARCHAR(50), pid INT, \
-                        FOREIGN KEY (pid) REFERENCES Profiles(pid))`
+                        FOREIGN KEY (pid) REFERENCES PROFILES(pid))`
 
 connection.query(createDatabase, function(error) {
     if (error) {
