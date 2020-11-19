@@ -6,7 +6,7 @@ const connection = mysql.createConnection({
     host: process.env.RDS_HOSTNAME || 'localhost',
     user: process.env.RDS_USERNAME || 'root',
     password: process.env.RDS_PASSWORD || process.env.db_password,
-    database: "sys",
+    // database: "sys",
     port: process.env.RDS_PORT,
   })
 
