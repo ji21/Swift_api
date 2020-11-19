@@ -24,7 +24,7 @@ connection.query(createDatabase, function(error) {
     if (error) {
         console.log(error);
     } else {
-        console.log("database created");
+        console.log(`database created and using ${dbName}`);
         // connection.changeUser({database: dbName}, function(error) {
         //     if (error) {
         //         console.log("unable to change database");
@@ -38,24 +38,24 @@ connection.query(`USE ${dbName}`, function(error){
         console.log(error);
     } else {
         console.log(`Using ${dbName}`)
+        connection.query(createProfilesQuery, function(error) {
+            if (error) {
+                console.log(error);
+            } else {
+                console.log("profiles table created");
+            }
+        })
+        
+        connection.query(createUsersQuery, function(error) {
+            if (error) {
+                // console.log(error);
+            } else {
+                console.log("users table created");
+            }
+        })
     }
 })
 
-connection.query(createProfilesQuery, function(error) {
-    if (error) {
-        console.log(error);
-    } else {
-        console.log("profiles table created");
-    }
-})
-
-connection.query(createUsersQuery, function(error) {
-    if (error) {
-        // console.log(error);
-    } else {
-        console.log("users table created");
-    }
-})
 
 
 let db = {users: {all: null, getUserById: null}, profiles: {all: null}};
