@@ -14,11 +14,11 @@ var dbName = "swiftapi"
 
 const createDatabase = `CREATE DATABASE IF NOT EXISTS ${dbName}`;
 
-const createProfilesQuery = "CREATE TABLE IF NOT EXISTS Profiles(pid INT AUTO_INCREMENT PRIMARY KEY, name VARCHAR(20),\
-                            age INT NOT NULL, gender VARCHAR(20))"
-const createUsersQuery = "CREATE TABLE IF NOT EXISTS Users(uid INT AUTO_INCREMENT PRIMARY KEY, username VARCHAR(20),\
+const createProfilesQuery = `CREATE TABLE IF NOT EXISTS ${dbName}.Profiles(pid INT AUTO_INCREMENT PRIMARY KEY, name VARCHAR(20),\
+                            age INT NOT NULL, gender VARCHAR(20))`
+const createUsersQuery = `CREATE TABLE IF NOT EXISTS ${dbName}.Users(uid INT AUTO_INCREMENT PRIMARY KEY, username VARCHAR(20),\
                         password VARCHAR(255) NOT NULL, email VARCHAR(100), phone VARCHAR(50), pid INT, \
-                        FOREIGN KEY (pid) REFERENCES Profiles(pid))"
+                        FOREIGN KEY (pid) REFERENCES Profiles(pid))`
 
 connection.query(createDatabase, function(error) {
     if (error) {
@@ -38,24 +38,24 @@ connection.query(`USE ${dbName}`, function(error){
         console.log(error);
     } else {
         console.log(`Using ${dbName}`)
-        connection.query(createProfilesQuery, function(error) {
-            if (error) {
-                console.log(error);
-            } else {
-                console.log("profiles table created");
-            }
-        })
-        
-        connection.query(createUsersQuery, function(error) {
-            if (error) {
-                // console.log(error);
-            } else {
-                console.log("users table created");
-            }
-        })
     }
 })
 
+connection.query(createProfilesQuery, function(error) {
+    if (error) {
+        console.log(error);
+    } else {
+        console.log("profiles table created");
+    }
+})
+
+connection.query(createUsersQuery, function(error) {
+    if (error) {
+        // console.log(error);
+    } else {
+        console.log("users table created");
+    }
+})
 
 
 let db = {users: {all: null, getUserById: null}, profiles: {all: null}};
