@@ -52,6 +52,7 @@ connection.query(createProfilesQuery, function(error) {
 connection.query(createUsersQuery, function(error) {
     if (error) {
         console.log("users table failed to create");
+        console.log(error);
     } else {
         console.log("users table created");
     }
