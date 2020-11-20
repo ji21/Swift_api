@@ -86,22 +86,27 @@ db.users.getUserById = (id) => {
 
 db.users.create = (params) => {
     if (params.email != undefined) {
-        return new Promise((resolve, reject) => {
+        const promise = () => { return new Promise((resolve, reject) => {
             connection.query(`INSERT INTO PROFILES(name, birthdate) VALUES ('${params.name}', '${params.birthdate}')`, (error, results) => {
                 if (error) {
                     return reject(error);
                 }
-                return resolve(results);
+                console.log("promise 1");
+                resolve(results);
             })
-        }).then(result=>{
-            const pid = result.insertId;
-            connection.query(`INSERT INTO USERS(password, email, pid) VALUES ('${params.password}', '${params.email}', '${pid}')`, (error, results) => {
-                if (error) {
-                    console.log(error.sqlMessage)
-                }
-               return results;
+        }).then((result)=>{
+            return new Promise((resolve, reject)=> {
+                const pid = result.insertId;
+                connection.query(`INSERT INTO USERS(password, email, pid) VALUES ('${params.password}', '${params.email}', '${pid}')`, (error, results) => {
+                    if (error) {
+                        return reject(error.sqlMessage);
+                    }
+                    console.log("promise 2");
+                   resolve(results);
+                })
             })
-        })
+        })}
+        return promise()
     } else {
         return new Promise((resolve, reject) => {
             connection.query(`INSERT INTO PROFILES(name, birthdate) VALUES ('${params.name}', '${params.birthdate}')`, (error, results) => {

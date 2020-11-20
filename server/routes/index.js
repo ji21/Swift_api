@@ -26,9 +26,13 @@ router.get('/users/:id', async (req,res,next)=>{
 
 router.post('/users', async (req,res) => {
     const params = req.body;
+    // console.log(params);
     try {
-        let results = await db.users.create(params);
-        res.json(results);
+        // let results = await db.users.create(params);
+        // console.log(results)
+        db.users.create(params).then((result)=>res.json(result)).catch(error=>res.json(error));
+        // console.log(typeof results);
+        // res.json(results);
     } catch (error) {
         console.log(error);
         response.sendStatus(500);
