@@ -22,20 +22,15 @@ var dbName = "swiftapi"
 
 const createDatabase = `CREATE DATABASE IF NOT EXISTS ${dbName}`;
 
-const createProfilesQuery = "CREATE TABLE IF NOT EXISTS PROFILES (pid INT AUTO_INCREMENT PRIMARY KEY, name VARCHAR(20), age INT NOT NULL, gender VARCHAR(20))"
+const createProfilesQuery = "CREATE TABLE IF NOT EXISTS PROFILES (pid INT AUTO_INCREMENT PRIMARY KEY, name VARCHAR(20), birthdate DATE NOT NULL, gender VARCHAR(20))"
 
-const createUsersQuery = "CREATE TABLE IF NOT EXISTS USERS (uid INT AUTO_INCREMENT PRIMARY KEY, username VARCHAR(20), password VARCHAR(255) NOT NULL, email VARCHAR(100), phone VARCHAR(50), pid INT, FOREIGN KEY (pid) REFERENCES PROFILES(pid) ON DELETE CASCADE)"
+const createUsersQuery = "CREATE TABLE IF NOT EXISTS USERS (uid INT AUTO_INCREMENT PRIMARY KEY, username VARCHAR(20) UNIQUE, password VARCHAR(255) NOT NULL, email VARCHAR(100) UNIQUE, phone VARCHAR(50) UNIQUE, pid INT, FOREIGN KEY (pid) REFERENCES PROFILES(pid) ON DELETE CASCADE)"
 
 connection.query(createDatabase, function(error) {
     if (error) {
         console.log(error);
     } else {
         console.log(`database created and using ${dbName}`);
-        // connection.changeUser({database: dbName}, function(error) {
-        //     if (error) {
-        //         console.log("unable to change database");
-        //     } 
-        // })
     }
 })
 
@@ -90,22 +85,38 @@ db.users.getUserById = (id) => {
 }
 
 db.users.create = (params) => {
-    if (params.phone == undefined) {
+    if (params.email != undefined) {
         return new Promise((resolve, reject) => {
-            connection.query(`INSERT INTO USERS(username, password, email) VALUES ('${params.username}', '${params.password}', '${params.email}')`, (error, results) => {
+            connection.query(`INSERT INTO PROFILES(name, birthdate) VALUES ('${params.name}', '${params.birthdate}')`, (error, results) => {
                 if (error) {
                     return reject(error);
                 }
                 return resolve(results);
             })
+        }).then(result=>{
+            const pid = result.insertId;
+            connection.query(`INSERT INTO USERS(password, email, pid) VALUES ('${params.password}', '${params.email}', '${pid}')`, (error, results) => {
+                if (error) {
+                    console.log(error.sqlMessage)
+                }
+               return results;
+            })
         })
     } else {
         return new Promise((resolve, reject) => {
-            connection.query(`INSERT INTO USERS(username, password, phone) VALUES ('${params.username}', '${params.password}', '${params.phone}')`, (error, results) => {
+            connection.query(`INSERT INTO PROFILES(name, birthdate) VALUES ('${params.name}', '${params.birthdate}')`, (error, results) => {
                 if (error) {
                     return reject(error);
                 }
                 return resolve(results);
+            })
+        }).then(result=>{
+            const pid = result.insertId;
+            connection.query(`INSERT INTO USERS(password, phone, pid) VALUES ('${params.password}', '${params.phone}', '${pid}')`, (error, results) => {
+                if (error) {
+                    console.log(error.sqlMessage)
+                }
+                console.log(results);
             })
         })
     }
