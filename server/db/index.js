@@ -85,6 +85,7 @@ db.users.getUserById = (id) => {
 }
 
 db.users.create = (params) => {
+    console.log(new Date);
     if (params.email != undefined) {
         return new Promise((resolve, reject) => {
             connection.query(`INSERT INTO PROFILES(name, birthdate) VALUES ('${params.name}', '${params.birthdate}')`, (error, results) => {
