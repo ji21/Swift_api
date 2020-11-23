@@ -22,9 +22,9 @@ var dbName = "swiftapi"
 
 const createDatabase = `CREATE DATABASE IF NOT EXISTS ${dbName}`;
 
-const createProfilesQuery = "CREATE TABLE IF NOT EXISTS PROFILES (pid INT AUTO_INCREMENT PRIMARY KEY, name VARCHAR(20), birthdate DATE NOT NULL, gender VARCHAR(20))"
+const createProfilesQuery = "CREATE TABLE IF NOT EXISTS PROFILES (pid INT AUTO_INCREMENT PRIMARY KEY, name VARCHAR(20) NOT NULL, birthdate DATE NOT NULL, gender VARCHAR(20))"
 
-const createUsersQuery = "CREATE TABLE IF NOT EXISTS USERS (uid INT AUTO_INCREMENT PRIMARY KEY, username VARCHAR(20) UNIQUE, password VARCHAR(255) NOT NULL, email VARCHAR(100) UNIQUE, phone VARCHAR(50) UNIQUE, pid INT, FOREIGN KEY (pid) REFERENCES PROFILES(pid) ON DELETE CASCADE)"
+const createUsersQuery = "CREATE TABLE IF NOT EXISTS USERS (uid INT AUTO_INCREMENT PRIMARY KEY, username VARCHAR(20) UNIQUE, password VARCHAR(255), email VARCHAR(100) UNIQUE, phone VARCHAR(50) UNIQUE, pid INT, FOREIGN KEY (pid) REFERENCES PROFILES(pid) ON DELETE CASCADE)"
 
 connection.query(createDatabase, function(error) {
     if (error) {
@@ -97,7 +97,7 @@ db.users.create = (params) => {
         }).then((result)=>{
             return new Promise((resolve, reject)=> {
                 const pid = result.insertId;
-                connection.query(`INSERT INTO USERS(password, email, pid) VALUES ('${params.password}', '${params.email}', '${pid}')`, (error, results) => {
+                connection.query(`INSERT INTO USERS(email, pid) VALUES ('${params.email}', '${pid}')`, (error, results) => {
                     if (error) {
                         return reject(error.sqlMessage);
                     }
@@ -117,7 +117,7 @@ db.users.create = (params) => {
         }).then(result=>{
             return new Promise((resolve,reject)=> {
                 const pid = result.insertId;
-                connection.query(`INSERT INTO USERS(password, phone, pid) VALUES ('${params.password}', '${params.phone}', '${pid}')`, (error, results) => {
+                connection.query(`INSERT INTO USERS(phone, pid) VALUES ('${params.phone}', '${pid}')`, (error, results) => {
                     if (error) {
                         return reject(error.sqlMessage);
                     }

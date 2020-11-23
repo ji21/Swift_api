@@ -24,10 +24,13 @@ router.get('/users/:id', async (req,res,next)=>{
     }
 })
 
-router.post('/users', async (req,res) => {
+router.post('/users', (req,res) => {
     const params = req.body;
     // console.log(params);
-    db.users.create(params).then((result)=>res.json(result)).catch(error=>res.json(error));
+    db.users.create(params).then((result)=>res.json(`User number ${result.insertId} sucessfully created`)).catch(error=>{
+        if (error.includes("phone")) res.json("Phone already in use")
+        else res.json("Email already in use")
+    });
 })
 
 
