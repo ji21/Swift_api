@@ -28,8 +28,8 @@ router.post('/users', (req,res) => {
     const params = req.body;
     // console.log(params);
     db.users.create(params).then((result)=>res.json(result)).catch(error=>{
-        if (error.includes("phone")) res.json("Phone already in use")
-        else res.json("Email already in use")
+        if (error.includes("phone")) res.json({"error": "Phone already in use"})
+        else res.json({"error": "Email already in use"})
     });
 })
 
