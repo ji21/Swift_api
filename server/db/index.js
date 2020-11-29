@@ -84,6 +84,31 @@ db.users.getUserById = (id) => {
     })
 }
 
+db.users.validate = (validate) => {
+    if (validate.email != undefined) {
+        //find if email exists in db
+        return new Promise((resolve, reject) => {
+            connection.query(`SELECT * from USERS WHERE email = '${validate.email}' LIMIT 1`, (error, results)=>{
+                if (error) {
+                    console.log(error);
+                    return reject(error);
+                }
+                resolve(results);
+            })
+        })
+    } else {
+        return new Promise((resolve, reject) => {
+            connection.query(`SELECT * from USERS WHERE phone = '${validate.phone}' LIMIT 1`, (error, results)=>{
+                if (error) {
+                    console.log(error);
+                    return reject(error);
+                }
+                resolve(results);
+            })
+        })
+    }
+}
+
 db.users.create = (params) => {
     console.log(new Date);
     if (params.email != undefined) {

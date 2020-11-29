@@ -27,9 +27,20 @@ router.get('/users/:id', async (req,res,next)=>{
 router.post('/users', (req,res) => {
     const params = req.body;
     // console.log(params);
-    db.users.create(params).then((result)=>res.json(result)).catch(error=>{
-        res.sendStatus(500);
-    });
+    if (params.validate) {
+        // console.log(typeof db.users.validate);
+        db.users.validate(params.validate).then((result)=>{
+            if (result.length == 0) {
+                res.sendStatus(200);
+            } else {
+                res.sendStatus(500);
+            }
+        }).catch(error=>res.sendStatus(500));
+    } else {
+        db.users.create(params).then((result)=>res.json(result)).catch(error=>{
+            res.sendStatus(500);
+        });
+    }
 })
 
 
