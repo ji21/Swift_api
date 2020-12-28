@@ -1,5 +1,6 @@
 const mysql = require('mysql');
 const dotenv = require('dotenv');
+const { param } = require('../routes');
 dotenv.config();
 
 
@@ -10,13 +11,13 @@ const connection = mysql.createConnection({
     port: process.env.RDS_PORT,
   })
 
-connection.query("DROP DATABASE swiftapi", function(error){
-    if (error) {
-        console.log(error);
-    } else {
-        console.log("dropped all db")
-    }
-})
+// connection.query("DROP DATABASE swiftapi", function(error){
+//     if (error) {
+//         console.log(error);
+//     } else {
+//         console.log("dropped all db")
+//     }
+// })
 
 var dbName = "swiftapi"
 
@@ -85,10 +86,20 @@ db.users.getUserById = (id) => {
 }
 
 db.users.validate = (validate) => {
-    if (validate.email != undefined) {
+    if (validate.email !== undefined) {
         //find if email exists in db
         return new Promise((resolve, reject) => {
-            connection.query(`SELECT * from USERS WHERE email = '${validate.email}' LIMIT 1`, (error, results)=>{
+            connection.query(`SELECT * from USERS WHERE email = '${validate.email}' and password = '${validate.password}' LIMIT 1`, (error, results)=>{
+                if (error) {
+                    console.log(error);
+                    return reject(error);
+                }
+                resolve(results);
+            })
+        })
+    } else if (validate.username !== undefined) {
+        return new Promise((resolve, reject) => {
+            connection.query(`SELECT * from USERS WHERE username = '${validate.username}' and password = '${validate.password}' LIMIT 1`, (error, results)=>{
                 if (error) {
                     console.log(error);
                     return reject(error);
@@ -98,7 +109,7 @@ db.users.validate = (validate) => {
         })
     } else {
         return new Promise((resolve, reject) => {
-            connection.query(`SELECT * from USERS WHERE phone = '${validate.phone}' LIMIT 1`, (error, results)=>{
+            connection.query(`SELECT * from USERS WHERE phone = '${validate.phone}' and password = '${validate.password}' LIMIT 1`, (error, results)=>{
                 if (error) {
                     console.log(error);
                     return reject(error);
@@ -111,7 +122,7 @@ db.users.validate = (validate) => {
 
 db.users.create = (params) => {
     console.log(new Date);
-    if (params.email != undefined) {
+    if (params.email !== undefined) {
         return new Promise((resolve, reject) => {
             connection.query(`INSERT INTO PROFILES(name, birthdate) VALUES ('${params.name}', '${params.birthdate}')`, (error, results) => {
                 if (error) {
@@ -123,11 +134,30 @@ db.users.create = (params) => {
         }).then((result)=>{
             return new Promise((resolve, reject)=> {
                 const pid = result.insertId;
-                connection.query(`INSERT INTO USERS(email, pid) VALUES ('${params.email}', '${pid}')`, (error, results) => {
+                connection.query(`INSERT INTO USERS(email, pid, password) VALUES ('${params.email}', '${pid}', '${params.password}')`, (error, results) => {
                     if (error) {
                         return reject(error.sqlMessage);
                     }
                     console.log("promise 2");
+                   resolve(results);
+                })
+            })
+        })
+    } else if (params.username!==undefined) {
+        return new Promise((resolve, reject) => {
+            connection.query(`INSERT INTO PROFILES(name, birthdate) VALUES ('${params.name}', '${params.birthdate}')`, (error, results) => {
+                if (error) {
+                    return reject(error);
+                }
+                resolve(results);
+            })
+        }).then((result)=>{
+            return new Promise((resolve, reject)=> {
+                const pid = result.insertId;
+                connection.query(`INSERT INTO USERS(username, pid, password) VALUES ('${params.username}', '${pid}', '${params.password}')`, (error, results) => {
+                    if (error) {
+                        return reject(error.sqlMessage);
+                    }
                    resolve(results);
                 })
             })
@@ -143,7 +173,7 @@ db.users.create = (params) => {
         }).then(result=>{
             return new Promise((resolve,reject)=> {
                 const pid = result.insertId;
-                connection.query(`INSERT INTO USERS(phone, pid) VALUES ('${params.phone}', '${pid}')`, (error, results) => {
+                connection.query(`INSERT INTO USERS(phone, pid, password) VALUES ('${params.phone}', '${pid}', '${params.password}')`, (error, results) => {
                     if (error) {
                         return reject(error.sqlMessage);
                     }
