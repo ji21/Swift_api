@@ -123,9 +123,12 @@ db.users.validate = (validate) => {
 db.users.create = (params) => {
     console.log(new Date);
     if (params.email !== undefined) {
+        console.log("in promise")
         return new Promise((resolve, reject) => {
+            console.log("in first promise")
             connection.query(`INSERT INTO PROFILES(name, birthdate) VALUES ('${params.name}', '${params.birthdate}')`, (error, results) => {
                 if (error) {
+                    console.log("there was an error")
                     return reject(error);
                 }
                 console.log("promise 1");
