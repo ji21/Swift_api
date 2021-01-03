@@ -37,7 +37,7 @@ router.post('/users', (req,res) => {
         }).catch(error=>res.sendStatus(500));
     } else {
         db.users.create(params).then((result)=>
-            res.json(result)
+            res.json({userId: result.insertId, password: params.password})
             ).catch(error=>{
             res.sendStatus(500);
         });

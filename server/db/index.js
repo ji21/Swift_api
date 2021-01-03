@@ -27,6 +27,8 @@ const createProfilesQuery = "CREATE TABLE IF NOT EXISTS PROFILES (pid INT AUTO_I
 
 const createUsersQuery = "CREATE TABLE IF NOT EXISTS USERS (uid INT AUTO_INCREMENT PRIMARY KEY, username VARCHAR(20) UNIQUE, password VARCHAR(255), email VARCHAR(100) UNIQUE, phone VARCHAR(50) UNIQUE, pid INT, FOREIGN KEY (pid) REFERENCES PROFILES(pid) ON DELETE CASCADE)"
 
+// const createWabbitsQuery = "CREATE TABLE IF NOT EXISTS WABBITS (wid INT AUTO_INCREMENT PRIMARY KEY, )"
+
 connection.query(createDatabase, function(error) {
     if (error) {
         console.log(error);
@@ -61,7 +63,7 @@ connection.query(createUsersQuery, function(error) {
 })
 
 
-let db = {users: {all: null, getUserById: null}, profiles: {all: null}};
+let db = {users: {all: null, getUserById: null}, profiles: {all: null}, wabbits: {create: null}};
 
 db.users.all = () => {
     return new Promise((resolve,reject)=>{
@@ -196,6 +198,10 @@ db.profiles.all = () => {
             return resolve(results);
         })
     })
+}
+
+db.wabbits.create = (params) => {
+    return 1;
 }
 
 
